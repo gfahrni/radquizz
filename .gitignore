@@ -1,3 +1,6 @@
 .DS_Store
 preview/
 node_modules/
+
+# Notes locales (ne pas publier)
+AGENTS.md
