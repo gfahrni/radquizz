@@ -23,7 +23,7 @@
     form: { formId: '', entries: {} },
     serie: null,
     manifests: new Map(),
-    positions: store.get('positions', {}),
+    positions: store.get('positions.v3', {}),
     cineloop: null,
     pid: participantId(),
   };
@@ -183,7 +183,13 @@
     });
   }
 
-  /* ---------------- Pile d'images ---------------- */
+  /* ---------------- Pile d'images ----------------
+     Comportement « console » : la molette et le trackpad avancent d'une coupe
+     SANS transition, et un ascenseur à droite permet de se repérer et de sauter.
+     ------------------------------------------------- */
+
+  const PRELOAD = 4;      // coupes préchargées de part et d'autre
+  const SLICE_STEP = 100; // px de molette pour passer une coupe (1 cran ≈ 100)
 
   function renderStage(serie) {
     const stage = $('#stage');
@@ -195,6 +201,7 @@
 
     const stack = document.createElement('div');
     stack.className = 'stack';
+    stack.id = 'stack';
     stack.tabIndex = 0;
     stack.setAttribute('role', 'group');
     stack.setAttribute('aria-label', total
@@ -214,7 +221,7 @@
         img.alt = `Coupe ${i + 1} sur ${total}`;
         img.decoding = 'async';
         img.draggable = false;
-        if (i > 1) img.loading = 'lazy';
+        if (i > 3) img.loading = 'lazy';
         if (i === 0) img.fetchPriority = 'high';
         stack.append(img);
       });
@@ -230,8 +237,23 @@
         </button>
       </div>`;
 
-    viewer.append(stack, hud);
-    if (!total) hud.remove();
+    viewer.append(stack);
+    if (total > 1) {
+      const scrub = document.createElement('div');
+      scrub.className = 'scrub';
+      scrub.tabIndex = 0;
+      scrub.setAttribute('role', 'scrollbar');
+      scrub.setAttribute('aria-orientation', 'vertical');
+      scrub.setAttribute('aria-controls', 'stack');
+      scrub.setAttribute('aria-valuemin', '1');
+      scrub.setAttribute('aria-valuemax', String(total));
+      scrub.setAttribute('aria-valuenow', '1');
+      scrub.setAttribute('aria-label', 'Position dans la pile de coupes');
+      scrub.innerHTML = '<div class="scrub-track"><div class="scrub-thumb"></div></div>';
+      viewer.append(scrub);
+    }
+    if (total) viewer.append(hud);
+
     stage.replaceChildren(viewer);
 
     const meta = $('#serie-meta');
@@ -240,75 +262,170 @@
       meta.hidden = !serie.note;
     }
 
-    if (total) wireStack(stack, total);
-    restorePosition(stack);
+    if (total) wireViewer({ viewer, stack, files, total, serie });
   }
 
-  function wireStack(stack, total) {
-    const posEl = $('.pos', stack.parentElement);
-    const countEl = $('.of', stack.parentElement);
-    const key = CASE_ID + ':' + state.serie.id;
+  function wireViewer({ viewer, stack, files, total, serie }) {
+    const posEl = $('.pos', viewer);
+    const countEl = $('.of', viewer);
+    const scrub = $('.scrub', viewer);
+    const track = scrub ? $('.scrub-track', scrub) : null;
+    const thumb = scrub ? $('.scrub-thumb', scrub) : null;
+
+    const key = CASE_ID + ':' + serie.id;
+    const maxIndex = total - 1;
+    const preloaded = new Map();
+
+    const height = () => stack.clientHeight || 1;
+    const indexOf = () =>
+      Math.min(maxIndex, Math.max(0, Math.round(stack.scrollTop / height())));
+    const goTo = (i) => {
+      stack.scrollTop = Math.min(maxIndex, Math.max(0, i)) * height();
+    };
+
+    function preload(center) {
+      for (let d = -PRELOAD; d <= PRELOAD; d++) {
+        const i = center + d;
+        if (i < 0 || i > maxIndex || preloaded.has(i)) continue;
+        const img = new Image();
+        img.decoding = 'async';
+        img.src = imageUrl(serie, files[i]);
+        preloaded.set(i, img);
+      }
+    }
+
+    function paint() {
+      const i = indexOf();
+      if (posEl) posEl.textContent = String(i + 1);
+      if (countEl) countEl.textContent = ' / ' + total;
+      if (scrub) {
+        scrub.setAttribute('aria-valuenow', String(i + 1));
+        scrub.setAttribute('aria-valuetext', `Coupe ${i + 1} sur ${total}`);
+        if (track) track.style.setProperty('--p', String(maxIndex ? i / maxIndex : 0));
+      }
+      state.positions[key] = i;
+      preload(i);
+    }
+
+    /* hauteur du curseur de l'ascenseur */
+    if (track) {
+      const sizeThumb = () => {
+        const h = Math.max(22, track.clientHeight / total);
+        track.style.setProperty('--thumb', h + 'px');
+      };
+      sizeThumb();
+      if ('ResizeObserver' in window) new ResizeObserver(sizeThumb).observe(track);
+      else window.addEventListener('resize', sizeThumb, { passive: true });
+    }
 
     let raf = 0;
     stack.addEventListener('scroll', () => {
       if (raf) return;
-      raf = requestAnimationFrame(() => {
-        raf = 0;
-        const h = stack.clientHeight || 1;
-        const idx = Math.min(total - 1, Math.max(0, Math.round(stack.scrollTop / h)));
-        if (posEl) posEl.textContent = String(idx + 1);
-        if (countEl) countEl.textContent = ' / ' + total;
-        state.positions[key] = stack.scrollTop;
-      });
+      raf = requestAnimationFrame(() => { raf = 0; paint(); });
     }, { passive: true });
 
-    const step = (dir) => stack.scrollBy({ top: dir * stack.clientHeight, behavior: 'smooth' });
-
-    stack.addEventListener('keydown', (e) => {
-      const dirs = { ArrowDown: 1, PageDown: 1, ArrowUp: -1, PageUp: -1 };
-      if (e.key in dirs) { e.preventDefault(); step(dirs[e.key]); return; }
-      if (e.key === 'Home') { e.preventDefault(); stack.scrollTo({ top: 0, behavior: 'smooth' }); }
-      if (e.key === 'End') {
-        e.preventDefault();
-        stack.scrollTo({ top: stack.scrollHeight, behavior: 'smooth' });
-      }
-    });
-
-    /* ciné : avance automatiquement, s'arrête à la fin */
-    const btn = $('.cineloop', stack.parentElement);
-    if (!btn) return;
-
+    /* --- ciné : avance automatiquement, s'arrête à la fin --- */
+    const btn = $('.cineloop', viewer);
+    const svg = btn ? $('svg', btn) : null;
     const iconPlay = '<path d="M4 2.5v11l9-5.5z" fill="currentColor"/>';
     const iconPause = '<path d="M3.5 2.5h3v11h-3zM9.5 2.5h3v11h-3z" fill="currentColor"/>';
-    const svg = $('svg', btn);
 
-    const stop = () => {
+    function stop() {
       clearInterval(state.cineloop);
       state.cineloop = null;
+      if (!btn) return;
       btn.setAttribute('aria-pressed', 'false');
       if (svg) svg.innerHTML = iconPlay;
-    };
+    }
 
-    btn.addEventListener('click', () => {
-      if (state.cineloop) { stop(); return; }
-      const h = stack.clientHeight || 1;
-      btn.setAttribute('aria-pressed', 'true');
-      if (svg) svg.innerHTML = iconPause;
-      state.cineloop = setInterval(() => {
-        const next = Math.round(stack.scrollTop / h) + 1;
-        if (next >= total) { stop(); return; }
-        stack.scrollTo({ top: next * h, behavior: 'smooth' });
-      }, 260);
+    if (btn) {
+      btn.addEventListener('click', () => {
+        if (state.cineloop) { stop(); return; }
+        btn.setAttribute('aria-pressed', 'true');
+        if (svg) svg.innerHTML = iconPause;
+        state.cineloop = setInterval(() => {
+          const next = indexOf() + 1;
+          if (next > maxIndex) { stop(); return; }
+          goTo(next);
+          paint();
+        }, 240);
+      });
+    }
+
+    /* --- molette / trackpad : une coupe par cran, sans animation --- */
+    let acc = 0;
+    viewer.addEventListener('wheel', (e) => {
+      if (e.ctrlKey || e.metaKey) return;           // laisser le pinch-zoom
+      const i = indexOf();
+      const dy = e.deltaMode === 1 ? e.deltaY * 33
+        : e.deltaMode === 2 ? e.deltaY * height()
+        : e.deltaY;
+
+      // en bout de pile on laisse la page défiler (pour atteindre le formulaire)
+      if ((i <= 0 && dy < 0) || (i >= maxIndex && dy > 0)) return;
+
+      e.preventDefault();
+      stop();
+      acc += dy;
+      const steps = Math.trunc(acc / SLICE_STEP);
+      if (!steps) return;
+      acc -= steps * SLICE_STEP;
+      goTo(i + steps);
+      paint();
+    }, { passive: false });
+
+    /* --- clavier --- */
+    stack.addEventListener('keydown', (e) => {
+      const dirs = { ArrowDown: 1, PageDown: 1, ArrowUp: -1, PageUp: -1 };
+      if (e.key in dirs) { e.preventDefault(); goTo(indexOf() + dirs[e.key]); paint(); return; }
+      if (e.key === 'Home') { e.preventDefault(); goTo(0); paint(); }
+      if (e.key === 'End') { e.preventDefault(); goTo(maxIndex); paint(); }
     });
 
-    stack.addEventListener('wheel', stop, { passive: true });
-    stack.addEventListener('pointerdown', stop, { passive: true });
-  }
+    /* --- ascenseur : clic, glisser, clavier --- */
+    if (scrub && track && thumb) {
+      let dragging = false;
 
-  function restorePosition(stack) {
-    const y = state.positions[CASE_ID + ':' + state.serie.id];
-    if (!y) return;
-    requestAnimationFrame(() => { stack.scrollTop = y; });
+      const ratioAt = (clientY) => {
+        const r = track.getBoundingClientRect();
+        const th = thumb.offsetHeight;
+        const span = Math.max(1, r.height - th);
+        return Math.min(1, Math.max(0, (clientY - r.top - th / 2) / span));
+      };
+      const seek = (clientY) => {
+        goTo(Math.round(ratioAt(clientY) * maxIndex));
+        paint();
+      };
+
+      scrub.addEventListener('pointerdown', (e) => {
+        if (e.pointerType === 'mouse' && e.button !== 0) return;
+        e.preventDefault();
+        dragging = true;
+        scrub.classList.add('is-dragging');
+        scrub.focus({ preventScroll: true });
+        try { scrub.setPointerCapture(e.pointerId); } catch { /* ignore */ }
+        seek(e.clientY);
+      });
+      scrub.addEventListener('pointermove', (e) => { if (dragging) seek(e.clientY); });
+      const endDrag = () => {
+        dragging = false;
+        scrub.classList.remove('is-dragging');
+      };
+      scrub.addEventListener('pointerup', endDrag);
+      scrub.addEventListener('pointercancel', endDrag);
+
+      scrub.addEventListener('keydown', (e) => {
+        const dirs = { ArrowDown: 1, ArrowRight: 1, ArrowUp: -1, ArrowLeft: -1 };
+        if (e.key in dirs) { e.preventDefault(); goTo(indexOf() + dirs[e.key]); paint(); return; }
+        if (e.key === 'Home') { e.preventDefault(); goTo(0); paint(); }
+        if (e.key === 'End') { e.preventDefault(); goTo(maxIndex); paint(); }
+      });
+    }
+
+    /* --- position de lecture restaurée --- */
+    const remembered = Math.min(maxIndex, Math.max(0, Math.round(Number(state.positions[key]) || 0)));
+    goTo(remembered);
+    paint();
   }
 
   /* ---------------- Navigation entre séries ---------------- */
@@ -393,7 +510,7 @@
         if (id && id !== state.serie?.id) selectSerie(id, { push: false });
       });
 
-      window.addEventListener('pagehide', () => store.set('positions', state.positions));
+      window.addEventListener('pagehide', () => store.set('positions.v3', state.positions));
     } catch (err) {
       console.error(err);
       $('#stage').innerHTML = `<div class="notice"><strong>Impossible de charger ce cas.</strong><br>

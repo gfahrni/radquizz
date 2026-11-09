@@ -689,3 +689,65 @@ a { color: var(--accent); }
   .cases { grid-template-columns: 1fr; gap: 14px; }
   .case-head h1 { font-size: 1.5rem; }
 }
+
+
+/* ---------- 11. Défilement « console » ----------
+   Pointeur fin (souris/trackpad) : pas de magnétisme, la molette avance
+   d'une coupe sans transition. Sur écran tactile on garde le snap natif. */
+@media (hover: hover) and (pointer: fine) {
+  .stack { scroll-snap-type: none; }
+  .slice { scroll-snap-align: none; scroll-snap-stop: normal; }
+}
+
+/* Ascenseur vertical, à droite de la visionneuse */
+.scrub {
+  position: absolute;
+  top: 14px;
+  bottom: 62px;
+  right: 4px;
+  width: 24px;
+  z-index: 3;
+  display: flex;
+  justify-content: center;
+  cursor: pointer;
+  touch-action: none;
+  border-radius: 999px;
+}
+.scrub:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+.scrub.is-dragging { cursor: grabbing; }
+
+.scrub-track {
+  position: relative;
+  width: 4px;
+  height: 100%;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .22);
+  transition: width .15s var(--ease), background .15s;
+}
+.scrub:hover .scrub-track,
+.scrub.is-dragging .scrub-track {
+  width: 6px;
+  background: rgba(255, 255, 255, .3);
+}
+
+.scrub-thumb {
+  position: absolute;
+  left: 50%;
+  width: 11px;
+  height: var(--thumb, 24px);
+  top: calc((100% - var(--thumb, 24px)) * var(--p, 0));
+  transform: translateX(-50%);
+  border-radius: 999px;
+  background: rgba(238, 242, 247, .85);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, .55);
+  transition: background .15s;
+}
+.scrub:hover .scrub-thumb,
+.scrub.is-dragging .scrub-thumb { background: #ffffff; }
+
+@media (max-width: 720px) {
+  .scrub { top: 10px; bottom: 58px; right: 2px; }
+}

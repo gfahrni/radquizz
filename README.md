@@ -57,6 +57,22 @@ Un cas = un fichier JSON + un dossier d'images par série.
 - `tab` : le texte court dans l'onglet. `note` : la ligne technique affichée au-dessus des images.
 - Ordre des séries = ordre des onglets.
 
+### Confort de lecture
+
+Comportement « console » : le défilement est continu et **instantané**, sans animation
+d'une coupe à l'autre.
+
+- **Molette / trackpad** : une coupe par cran ; les petits mouvements s'accumulent, une
+  geste rapide traverse la pile. En bout de pile, la molette rend la main à la page pour
+  atteindre le formulaire.
+- **Ascenseur à droite** de l'image : cliquer ou glisser pour se déplacer, ou lui donner
+  le focus et utiliser les flèches.
+- **Clavier** sur l'image : ↑ ↓, Page↑ Page↓, Début / Fin.
+- Réglages en haut de `assets/app.js` : `SLICE_STEP` (pixels de molette par coupe, 100)
+  et `PRELOAD` (coupes préchargées de part et d'autre, 4).
+
+Sur écran tactile, on garde le défilement natif aimanté (une coupe à la fois).
+
 ---
 
 ## 2. Tester en local
