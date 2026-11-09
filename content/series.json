@@ -1,0 +1,34 @@
+{
+  "quiz": {
+    "title": "Trois cas radiologiques, deux minutes chacun",
+    "subtitle": "Faites défiler les coupes comme sur une console. Quand vous avez votre diagnostic, descendez : la zone de réponse est en bas de chaque cas.",
+    "footer": "RadQuizz — images de démonstration (placeholders). Remplacez-les par vos propres séries. Usage pédagogique."
+  },
+
+  "series": [
+    {
+      "id": "serie-01",
+      "tab": "Thorax",
+      "title": "Douleur basithoracique droite",
+      "stem": "Femme, 54 ans. Douleur brutale de l'hémithorax droit à la toux, dyspnée légère, auscultation diminuée à droite. Pas de fièvre, pas d'antécédent particulier.",
+      "formLabel": "Série 1 — Thorax",
+      "folder": "images/serie-01"
+    },
+    {
+      "id": "serie-02",
+      "tab": "Abdomen",
+      "title": "Douleur de la fosse iliaque gauche",
+      "stem": "Homme, 68 ans. Douleur de la fosse iliaque gauche depuis 24 h, fébricule. Biologie : CRP 140 mg/L, leucocytes 14 G/L.",
+      "formLabel": "Série 2 — Abdomen",
+      "folder": "images/serie-02"
+    },
+    {
+      "id": "serie-03",
+      "tab": "Cerveau",
+      "title": "Céphalée brutale",
+      "stem": "Femme, 31 ans. Céphalée brutale en coup de tonnerre il y a 3 heures, sans déficit neurologique focal. Pas d'antécédent migraineux.",
+      "formLabel": "Série 3 — Cerveau",
+      "folder": "images/serie-03"
+    }
+  ]
+}
