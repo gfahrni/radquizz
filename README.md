@@ -108,7 +108,13 @@ Le script fait trois choses :
 
 ## 4. Créer le Google Form
 
-Dans [forms.google.com](https://forms.google.com), créez un formulaire avec, dans cet ordre :
+**Le plus rapide :** ouvrez <https://script.google.com>, collez
+[tools/create-google-form.gs](tools/create-google-form.gs) dans un nouveau projet, cliquez sur
+**Exécuter**, puis copiez le bloc JSON du journal d'exécution dans `content/form.json`.
+Le script crée le formulaire avec les questions ci-dessous et affiche directement le `formId`
+et les `entry.…` attendus.
+
+Sinon, à la main, dans [forms.google.com](https://forms.google.com), créez un formulaire avec, dans cet ordre :
 
 | # | Question | Type | Obligatoire |
 |---|---|---|---|
@@ -302,6 +308,7 @@ content/form.json           ← à éditer : identifiant du Google Form
 images/<cas>/<série>/       les coupes + manifest.json généré
 
 tools/build.mjs             manifest + pages + index
+tools/create-google-form.gs crée le Google Form (Apps Script)
 tools/serve.mjs             serveur local de test
 tools/make-placeholders.py  régénère les images de démonstration
 package.json                version du site + scripts
