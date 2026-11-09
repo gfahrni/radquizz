@@ -250,7 +250,8 @@ npm run build && git add . && git commit -m "Nouveau cas" && git push
 ```
 
 La version vit dans `package.json` (`version`), est injectée dans les pages au build et
-affichée en pied de page. Pour publier une version :
+affichée en pied de page. Le build ajoute aussi `?v=<version>` aux fichiers CSS et JS :
+à chaque nouveau numéro de version, leur cache navigateur est invalidé automatiquement. Pour publier une version :
 
 ```bash
 npm version 0.2.0 --no-git-tag-version
@@ -277,7 +278,7 @@ git tag v0.2.0 && git push && git push --tags
 | Formulaire blanc / vide | `formId` faux, formulaire restreint, ou bloqueur de cookies |
 | Double barre de défilement dans le formulaire | Ajustez `height` de `.form-shell iframe` dans `assets/style.css` (1200 px desktop / 1560 px mobile) |
 | Les réponses n'arrivent pas dans le Sheet | onglet Réponses → vérifiez la feuille ; formulaire « Tout le monde disposant du lien » |
-| Une mise à jour n'apparaît pas | cache GitHub Pages (~10 min) ; testez en navigation privée |
+| Une mise à jour n'apparaît pas | cache navigateur : GitHub Pages envoie `cache-control: max-age=600`. Rechargez avec `Cmd/Ctrl + Shift + R`, ou attendez 10 min. Vider les cookies ne sert à rien. |
 
 ---
 

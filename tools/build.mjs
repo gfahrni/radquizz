@@ -159,6 +159,12 @@ async function main() {
     JSON.stringify({ version, cases: index }, null, 2) + '\n'
   );
 
+  // l'accueil est statique : on tient à jour le ?v= de ses assets
+  const homePath = path.join(ROOT, 'index.html');
+  const home = await readFile(homePath, 'utf8');
+  const busted = home.replace(/(assets\/[\w.-]+\.(?:css|js))\?v=[\w.-]+/g, `$1?v=${version}`);
+  if (busted !== home) await writeFile(homePath, busted);
+
   console.log(`Total : ${index.length} cas, ${grandTotal / 1024 / 1024 >= 0.1 ? mo(grandTotal) : Math.round(grandTotal / 1024) + ' Ko'}.`);
   console.log('Rappel GitHub Pages : 1 Go par site, ~100 Go de trafic par mois (limite souple).');
 
