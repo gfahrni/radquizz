@@ -1,0 +1,21 @@
+{
+  "id": "abdomen-01",
+  "title": "Douleur de la fosse iliaque gauche",
+  "exam": "TDM abdominopelvienne, avec injection",
+  "stem": "Homme, 68 ans. Douleur de la fosse iliaque gauche depuis 24 h, fébricule. Biologie : CRP 140 mg/L, leucocytes 14 G/L.",
+  "formLabel": "Cas 2 — Douleur de la fosse iliaque gauche",
+  "series": [
+    {
+      "id": "axial",
+      "tab": "Axial",
+      "note": "Coupes axiales · fenêtre abdominale · 2 mm",
+      "folder": "images/abdomen-01/axial"
+    },
+    {
+      "id": "coronal",
+      "tab": "Coronal",
+      "note": "Reconstruction coronale · fenêtre abdominale",
+      "folder": "images/abdomen-01/coronal"
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "version": "0.1.0",
+  "cases": [
+    {
+      "id": "abdomen-01",
+      "title": "Douleur de la fosse iliaque gauche",
+      "stem": "Homme, 68 ans. Douleur de la fosse iliaque gauche depuis 24 h, fébricule. Biologie : CRP 140 mg/L, leucocytes 14 G/L.",
+      "exam": "TDM abdominopelvienne, avec injection",
+      "href": "cas/abdomen-01/",
+      "thumb": "images/abdomen-01/axial/001.jpg",
+      "seriesCount": 2,
+      "sliceCount": 36
+    },
+    {
+      "id": "cerveau-01",
+      "title": "Céphalée brutale",
+      "stem": "Femme, 31 ans. Céphalée brutale en coup de tonnerre il y a 3 heures, sans déficit neurologique focal. Pas d'antécédent migraineux.",
+      "exam": "TDM cérébrale, sans injection",
+      "href": "cas/cerveau-01/",
+      "thumb": "images/cerveau-01/axial/001.jpg",
+      "seriesCount": 2,
+      "sliceCount": 28
+    },
+    {
+      "id": "thorax-01",
+      "title": "Douleur basithoracique droite",
+      "stem": "Femme, 54 ans. Douleur brutale de l'hémithorax droit à la toux, dyspnée légère, auscultation diminuée à droite. Pas de fièvre, pas d'antécédent particulier.",
+      "exam": "TDM thoracique, sans injection",
+      "href": "cas/thorax-01/",
+      "thumb": "images/thorax-01/axial/001.jpg",
+      "seriesCount": 2,
+      "sliceCount": 42
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "name": "radquizz",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Quiz radiologique statique : un cas par page, plusieurs séries par cas, réponses via Google Form.",
+  "homepage": "https://gfahrni.github.io/radquizz/",
+  "type": "module",
+  "scripts": {
+    "build": "node tools/build.mjs",
+    "start": "node tools/serve.mjs"
+  }
+}

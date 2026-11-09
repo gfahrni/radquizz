@@ -1,0 +1,21 @@
+{
+  "id": "thorax-01",
+  "title": "Douleur basithoracique droite",
+  "exam": "TDM thoracique, sans injection",
+  "stem": "Femme, 54 ans. Douleur brutale de l'hémithorax droit à la toux, dyspnée légère, auscultation diminuée à droite. Pas de fièvre, pas d'antécédent particulier.",
+  "formLabel": "Cas 1 — Douleur basithoracique droite",
+  "series": [
+    {
+      "id": "axial",
+      "tab": "Axial médiastinal",
+      "note": "Coupes axiales · fenêtre médiastinale · 1 mm",
+      "folder": "images/thorax-01/axial"
+    },
+    {
+      "id": "coronal",
+      "tab": "Coronal poumon",
+      "note": "Reconstruction coronale · fenêtre parenchymateuse",
+      "folder": "images/thorax-01/coronal"
+    }
+  ]
+}

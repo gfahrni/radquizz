@@ -564,3 +564,130 @@ a { color: var(--accent); }
 :root[data-theme="noel"] .kicker { color: var(--gold); }
 :root[data-theme="noel"] .kicker::before { opacity: .8; }
 :root[data-theme="noel"] .cta { box-shadow: 0 1px 2px rgba(0,0,0,.4), 0 14px 26px -16px rgba(200,16,46,.9); }
+
+/* ---------- 8. Accueil : liste des cas ---------- */
+.cases {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap: 18px;
+}
+
+.case-card {
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  box-shadow: var(--shadow-1);
+  transition: transform .18s var(--ease), box-shadow .18s var(--ease), border-color .18s;
+}
+.case-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-2);
+  border-color: var(--accent);
+}
+
+.thumb {
+  aspect-ratio: 16 / 10;
+  background: #000;
+  overflow: hidden;
+}
+.thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform .55s var(--ease);
+}
+.case-card:hover .thumb img { transform: scale(1.035); }
+.thumb-empty { display: grid; place-items: center; height: 100%; color: #6b7684; }
+
+.case-body {
+  padding: 15px 17px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+.case-kicker {
+  font-size: .72rem;
+  text-transform: uppercase;
+  letter-spacing: .09em;
+  color: var(--accent);
+  font-weight: 650;
+}
+.case-card.is-last .case-kicker::after {
+  content: " · à reprendre";
+  color: var(--ink-3);
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+}
+.case-body h2 {
+  font-size: 1.06rem;
+  letter-spacing: -.012em;
+}
+.case-case-stem, .case-stem {
+  color: var(--ink-2);
+  font-size: .87rem;
+  line-height: 1.45;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.case-foot {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+  font-size: .78rem;
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+
+.sk-card { height: 268px; border-radius: var(--radius); }
+
+/* ---------- 9. Page d'un cas ---------- */
+.case-head h1 {
+  font-size: clamp(1.6rem, 1.15rem + 1.7vw, 2.3rem);
+  letter-spacing: -.022em;
+  text-wrap: balance;
+}
+.case-meta {
+  margin-top: 10px;
+  font-size: .82rem;
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+
+.serie-meta {
+  margin: 0 0 10px;
+  font-size: .8rem;
+  color: var(--ink-3);
+  letter-spacing: .01em;
+}
+.serie-meta[hidden] { display: none; }
+
+.answer-tag {
+  font-size: .76rem;
+  font-weight: 600;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border: 1px solid var(--line);
+  padding: 4px 10px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.version { opacity: .6; font-variant-numeric: tabular-nums; }
+
+@media (max-width: 720px) {
+  .cases { grid-template-columns: 1fr; gap: 14px; }
+  .case-head h1 { font-size: 1.5rem; }
+}

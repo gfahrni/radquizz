@@ -1,10 +1,10 @@
 {
-  "_lisez_moi": "Collez ici l'identifiant de votre Google Form, puis les entry.… correspondant aux questions que la page doit préremplir. Voir README.md, section « Brancher le formulaire ».",
+  "_lisez_moi": "Collez ici l'identifiant de votre Google Form, puis les entry.… des questions à préremplir (cas + identifiant participant). Voir README.md, section « Brancher le formulaire ».",
 
   "formId": "",
 
   "entries": {
-    "serie": "",
+    "cas": "",
     "participant": ""
   }
 }

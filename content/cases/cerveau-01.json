@@ -1,0 +1,21 @@
+{
+  "id": "cerveau-01",
+  "title": "Céphalée brutale",
+  "exam": "TDM cérébrale, sans injection",
+  "stem": "Femme, 31 ans. Céphalée brutale en coup de tonnerre il y a 3 heures, sans déficit neurologique focal. Pas d'antécédent migraineux.",
+  "formLabel": "Cas 3 — Céphalée brutale",
+  "series": [
+    {
+      "id": "axial",
+      "tab": "Axial",
+      "note": "Coupes axiales · fenêtre parenchymateuse · 5 mm",
+      "folder": "images/cerveau-01/axial"
+    },
+    {
+      "id": "sagittal",
+      "tab": "Sagittal",
+      "note": "Reconstruction sagittale · fenêtre parenchymateuse",
+      "folder": "images/cerveau-01/sagittal"
+    }
+  ]
+}
