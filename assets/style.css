@@ -470,7 +470,7 @@ a { color: var(--accent); }
 .form-shell iframe {
   display: block;
   width: 100%;
-  height: 1520px;
+  height: 1200px;
   border: 0;
   background: #fff;
 }
@@ -541,7 +541,7 @@ a { color: var(--accent); }
   .intro { text-align: left; margin-bottom: 18px; }
   .stack { height: clamp(300px, 56svh, 520px); }
   .cta { width: 100%; }
-  .form-shell iframe { height: 1760px; }
+  .form-shell iframe { height: 1560px; }
   .answer { margin-top: 34px; scroll-margin-top: 96px; }
   .hint { font-size: .78rem; }
 }
@@ -559,3 +559,8 @@ a { color: var(--accent); }
   .chrome, .cta, .hint, .themes, .viewer { display: none !important; }
   body { background: #fff; }
 }
+
+/* Correctifs de contraste (thème sombre) */
+:root[data-theme="noel"] .kicker { color: var(--gold); }
+:root[data-theme="noel"] .kicker::before { opacity: .8; }
+:root[data-theme="noel"] .cta { box-shadow: 0 1px 2px rgba(0,0,0,.4), 0 14px 26px -16px rgba(200,16,46,.9); }

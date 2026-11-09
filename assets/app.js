@@ -169,8 +169,6 @@
 
     const section = document.createElement('section');
     section.className = 'serie';
-    section.setAttribute('role', 'tabpanel');
-    section.setAttribute('aria-labelledby', 'tab-' + serie.id);
     section.dataset.id = serie.id;
 
     const head = document.createElement('div');
@@ -251,6 +249,12 @@
 
     section.append(head, viewer, hint, cta, answer);
     panel.replaceChildren(section);
+
+    // descendre vers le formulaire sans toucher à l'URL (la série reste partageable)
+    cta.addEventListener('click', (e) => {
+      e.preventDefault();
+      answer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
 
     /* --- comportements --- */
     if (total) wireStack(stack, files.length);
@@ -375,17 +379,23 @@
       btn.setAttribute('aria-selected', String(on));
       btn.tabIndex = on ? 0 : -1;
     });
+    const panel = $('#panel');
+    if (panel) panel.setAttribute('aria-labelledby', 'tab-' + state.activeId);
   }
 
   async function select(id, { push = true } = {}) {
     const serie = state.series.find((s) => s.id === id) || state.series[0];
     if (!serie) return;
+
+    // coupe une éventuelle lecture automatique en cours
+    if (state.cineloop) { clearInterval(state.cineloop); state.cineloop = null; }
+
     state.activeId = serie.id;
     if (push) history.pushState(null, '', '#/' + serie.id);
     syncTabs();
     await loadManifest(serie);
     renderSerie(serie);
-    if (push) window.scrollTo({ top: 0, behavior: 'instant' in window ? 'instant' : 'auto' });
+    if (push) window.scrollTo(0, 0);
   }
 
   function idFromHash() {
@@ -425,7 +435,7 @@
 
       if (!state.series.length) throw new Error('Aucune série dans content/series.json');
 
-      document.title = state.quiz.title ? state.quiz.title + ' — cas radiologiques' : document.title;
+      document.title = (state.quiz.title ? state.quiz.title + ' · ' : '') + 'RadQuizz';
       $('#quiz-title').textContent = state.quiz.title || 'RadQuizz';
       $('#quiz-sub').textContent = state.quiz.subtitle || '';
       if (state.quiz.footer) $('#foot-note').textContent = state.quiz.footer;
