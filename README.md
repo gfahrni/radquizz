@@ -1,5 +1,7 @@
 # RadQuizz
 
+**En ligne : <https://gfahrni.github.io/radquizz/>** — dépôt : <https://github.com/gfahrni/radquizz>
+
 Un quiz radiologique statique : on clique sur un lien, on fait défiler les coupes d'une série,
 on donne son diagnostic en bas de page, et la réponse part dans un Google Sheet via un
 Google Form intégré.
@@ -30,6 +32,9 @@ python3 -m http.server 8000
 ---
 
 ## 2. Mettre en ligne sur GitHub Pages
+
+> C'est **déjà fait** pour ce dépôt : <https://gfahrni.github.io/radquizz/>.
+> Cette section sert si vous repartez de zéro ou dupliquez le projet.
 
 ```bash
 git init
